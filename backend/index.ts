@@ -1,16 +1,14 @@
-import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import cors from 'cors';
 import 'dotenv/config';
 import type { Request, Response } from 'express';
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from './generated/prisma/client';
 import { authMiddleware, type AuthRequest, SECRET_KEY } from './mid/auth';
 
 const app = express();
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient();
 
 app.use(cors());
 app.use(express.json());
@@ -140,6 +138,11 @@ app.delete('/todos/:id', authMiddleware, async (req: AuthRequest, res: Response)
   res.json({ message: "Deleted" });
 });
 
-app.listen(3000, '0.0.0.0', () => {
-  console.log('Server running on port 3000');
+// Export for Vercel serverless
+export default app;
+
+// Local development
+const PORT = 3000;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
