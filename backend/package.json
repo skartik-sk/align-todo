@@ -3,10 +3,10 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "build": "bun prisma generate && bun build index.ts --outdir dist --target node",
-    "start": "bun run index.ts",
-    "dev": "bun --watch index.ts",
-    "postinstall": "bun prisma generate"
+    "build": "prisma generate && bun build index.ts --outdir dist --target node",
+    "start": "bun ./index.ts",
+    "dev": "bun --watch ./index.ts",
+    "postinstall": "prisma generate"
   },
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",
@@ -21,6 +21,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",

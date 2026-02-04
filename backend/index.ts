@@ -1,20 +1,22 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import bcrypt from 'bcryptjs';
 import cors from 'cors';
 import 'dotenv/config';
 import type { Request, Response } from 'express';
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import { PrismaClient } from './generated/prisma/client';
 import { authMiddleware, type AuthRequest, SECRET_KEY } from './mid/auth';
 
 const app = express();
-const prisma = new PrismaClient({ adapter: null });
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
 app.use(cors());
 app.use(express.json());
 
 
-app.post('/signup', async (req: Request, res: Response) => {
+app.post('/signup', async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
   
   if (!email || !password) {
@@ -34,7 +36,7 @@ app.post('/signup', async (req: Request, res: Response) => {
   }
 });
 
-app.post('/login', async (req: Request, res: Response) => {
+app.post('/login', async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
 
   const user = await prisma.user.findUnique({ where: { email } });
@@ -49,8 +51,11 @@ app.post('/login', async (req: Request, res: Response) => {
 });
 
 
-app.get('/todos', authMiddleware, async (req: AuthRequest, res: Response) => {
-  if (!req.userId) return; // TS Guard
+app.get('/todos', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
+  if (!req.userId) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
 
   const todos = await prisma.todo.findMany({
     where: { userId: req.userId }
@@ -58,9 +63,11 @@ app.get('/todos', authMiddleware, async (req: AuthRequest, res: Response) => {
   res.json(todos);
 });
 
-// Create Todo
-app.post('/todos', authMiddleware, async (req: AuthRequest, res: Response) => {
-  if (!req.userId) return; 
+app.post('/todos', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
+  if (!req.userId) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
 
   const { title } = req.body;
   
@@ -74,20 +81,21 @@ app.post('/todos', authMiddleware, async (req: AuthRequest, res: Response) => {
 });
 
 
-app.put('/todos/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
-  if (!req.userId) return;
-
-  const { id } = req.params;
-  if(!id){
-     res.status(403).json({ error: "Not authenticated." });
+app.put('/todos/:id', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
+  if (!req.userId) {
+    res.status(401).json({ error: "Unauthorized" });
     return;
   }
 
+  const { id } = req.params;
+  if (!id || Array.isArray(id)) {
+    res.status(400).json({ error: "Invalid ID" });
+    return;
+  }
 
   const { completed, title } = req.body;
   const todoId = parseInt(id);
 
-  // Security Check: Ensure todo belongs to user
   const existingTodo = await prisma.todo.findUnique({ where: { id: todoId } });
 
   if (!existingTodo || existingTodo.userId !== req.userId) {
@@ -102,10 +110,23 @@ app.put('/todos/:id', authMiddleware, async (req: AuthRequest, res: Response) =>
   res.json(updated);
 });
 
-app.delete('/todos/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
-  if (!req.userId) return;
+app.delete('/todos/:id', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
+  if (!req.userId) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
 
   const { id } = req.params;
+
+  if(!id){
+    res.status(400).json({ error: "Invalid ID" });
+    return;
+  }
+  if (Array.isArray(id)) {
+    res.status(400).json({ error: "Invalid ID" });
+    return;
+  }
+
   const todoId = parseInt(id);
 
   const existingTodo = await prisma.todo.findUnique({ where: { id: todoId } });

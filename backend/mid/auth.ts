@@ -1,13 +1,13 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config'
-const SECRET_KEY = "supersecretkey";
+const SECRET_KEY = process.env.SECRET_KEY || "defaultsecretkey";
 
 export interface AuthRequest extends Request {
   userId?: number;
 }
 
-export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(401).json({ error: "Access denied" });
@@ -16,8 +16,13 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
 
   const token = authHeader.split(" ")[1]; 
 
+  if(!token){
+    res.status(401).json({ error: "Access denied" });
+    return;
+  }
+
   try {
-    const verified = jwt.verify(token, SECRET_KEY) as { userId: number };
+    const verified = jwt.verify(token, SECRET_KEY) as unknown as { userId: number };
     req.userId = verified.userId;
     next();
   } catch (err) {
