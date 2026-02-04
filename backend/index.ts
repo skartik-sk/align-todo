@@ -5,7 +5,7 @@ import 'dotenv/config';
 import type { Request, Response } from 'express';
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { authMiddleware, type AuthRequest, SECRET_KEY } from './mid/auth';
+import { authMiddleware, type AuthRequest, SECRET_KEY } from './mid/auth.js';
 
 const app = express();
 const prisma = new PrismaClient();
