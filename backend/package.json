@@ -6,7 +6,8 @@
     "build": "prisma generate && bun build index.ts --outdir dist --target node",
     "start": "bun ./index.ts",
     "dev": "bun --watch ./index.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+     "vercel-build": "prisma generate"
   },
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",
