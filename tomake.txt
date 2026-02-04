@@ -1,0 +1,68 @@
+Full Stack – Campus Machine Round | UIT RGPV | 04-Feb-2026  
+Project Overview:  You are required to build and deploy a fully functional web application within 75 minutes. This assignment tests your ability to work under time constraints, make quick technical decisions, and deliver a working product. 
+
+Required Project: Todo Application with Authentication 
+Build a Full-Stack Todo Application with Session Management 
+You must build a complete todo application with the following mandatory features: 
+
+ Core Features Required: 
+
+1. Authentication & Session Management
+User Registration: Sign up with email and password 
+User Login: Secure login with email and password 
+Session Management: 
+Maintain user sessions using JWT tokens or server-side sessions 
+Keep users logged in across page refreshes 
+Session expiration after inactivity (configurable time) 
+Logout: Clear session and redirect to login 
+Protected Routes: Only authenticated users can access their todos 
+Password Security: Hash passwords 
+NO THIRD-PARTY AUTH SERVICES: You must implement authentication yourself (no Clerk, Auth0, Firebase Auth, Supabase Auth, or similar services) 
+
+ 2. Todo Management
+Create Todo: Authenticated users can create new todos 
+Title/Description (required) 
+Status: Pending/Completed (default: Pending) 
+Created timestamp (auto-generated) 
+User association (auto-linked to logged-in user) 
+View All Todos: Users see ONLY their own todos 
+Update Todo: 
+Edit todo text/description 
+Mark todo as complete/incomplete (toggle status) 
+Delete Todo: Remove todos permanently 
+Filter Todos: Filter by status (All/Pending/Completed) 
+
+ 3. User Experience Features
+Responsive Design: Works on mobile, tablet, and desktop 
+Loading States: Show loading indicators during API calls 
+Error Handling: Display meaningful error messages 
+Form Validation: Validate inputs before submission 
+Empty States: Show appropriate messages when no todos exist 
+Todo Counter: Display count of pending/completed todos 
+
+ 4. Authorization
+Users can only view, edit, and delete their own todos 
+Backend API must verify ownership before allowing any todo operations 
+No user should be able to access another user's todos 
+
+ Technical Requirements 
+Frontend 
+Framework/Library: React, Next.js, Vue, or Vanilla JavaScript 
+Styling: Tailwind CSS, Bootstrap, or plain CSS 
+Deployment: Vercel, Netlify, or GitHub Pages 
+Backend 
+Runtime: Node.js (Express/Fastify) or Python (Flask/FastAPI) 
+Deployment: Render, Railway, or Cyclic 
+API: RESTful endpoints required 
+Session Management 
+Security: Password hashing required 
+IMPORTANT: You MUST implement authentication yourself - NO third-party auth services (Clerk, Auth0, Firebase Auth, Supabase Auth, NextAuth.js, Passport.js with OAuth, etc.) 
+
+Database 
+Options: MongoDB (Atlas), TursoDB, Supabase (database only), PostgreSQL, MySQL, or Firebase (database only) 
+Requirement: Must persist data (not in-memory storage) 
+IMPORTANT: You can use Supabase or Firebase for database storage only, but NOT their authentication services 
+
+Version Control 
+Bonus: GitHub repository with clear README 
+Bonus: Meaningful commit messages showing development progress
